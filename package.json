@@ -26,7 +26,7 @@
     "r": "nodemon server/server.js -e js,hbs",
     "t": "nodemon --exec 'mocha **/*.test.js'",
     "d": "npm run t -- --inspect-brk",
-    "s": "node server/server.js",
+    "start": "node server/server.js",
     "ds": "node inspect server/server.js"
   },
   "engines": {
