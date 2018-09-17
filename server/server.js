@@ -118,7 +118,6 @@
 
   app.delete('/todos/:id', (req, res) => {
     var id = req.params.id;
-    debugger
     if (!ObjectId.isValid(id)) {
       return res.status(404).send();
     }
@@ -127,7 +126,8 @@
       if (!todo) {
         return res.status(404).send();
       }
-      res.send(`deleted: ${todo}`)
+      debugger
+      res.send({todo})
     }).catch((e) => {
       res.status(400).send();
     });
