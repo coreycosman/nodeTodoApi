@@ -111,3 +111,24 @@
       res.status(400).send(e);
     });
   });
+
+// ___________________________
+
+  // DELETE
+
+  app.delete('/todos/:id', (req, res) => {
+    var id = req.params.id;
+    debugger
+    if (!ObjectId.isValid(id)) {
+      return res.status(404).send();
+    }
+
+    Todo.findByIdAndDelete(id).then((todo) => {
+      if (!todo) {
+        return res.status(404).send();
+      }
+      res.send(`deleted: ${todo}`)
+    }).catch((e) => {
+      res.status(400).send();
+    });
+  })
