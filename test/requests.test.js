@@ -9,7 +9,9 @@ const todos = [{
   text: 'first test todo'
 }, {
   _id: new ObjectId(),
-  text: 'second test todo'
+  text: 'second test todo',
+  completed: true,
+  completedAt: 1234
 }];
 const todoId = todos[0]._id.toHexString();
 const notFound = new ObjectId().toHexString();
@@ -98,6 +100,59 @@ describe('GET /todos/:id', () => {
   it('should return 404 object ID is invalid', (done) => {
     request(app)
     .get(`/todos/${invalidId}`)
+    .expect(404)
+    .end(done)
+  });
+});
+
+describe('PATCH /todos/:id', () => {
+  var updateText = 'update'
+
+  it('should update a todo', (done) => {
+    request(app)
+    .patch(`/todos/${todoId}`)
+    .send({
+      completed: true,
+      text: updateText
+    })
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).include('update');
+      expect(res.body.todo.completed).to.equal(true);
+    expect(res.body.todo.completedAt).to.be.a('number');
+    })
+    .end(done)
+  });
+
+  it('should clear completed at when todo not completed', (done) => {
+    request(app)
+    .patch(`/todos/${todos[1]._id.toHexString()}`)
+    .send({
+      text: updateText,
+      completed: false
+    })
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).include('update')
+      expect(res.body.todo.completed).to.equal(false)
+      expect(res.body.todo.completedAt).to.not.exist
+    })
+    .end(done)
+  });
+
+  it('should return 404 when todo does not exist', (done) => {
+    request(app)
+    .patch(`/todos/${notFound}`)
+    .expect(404)
+    .end(done)
+  });
+
+  it('should return 404 when id invalid', (done) => {
+    request(app)
+    .patch(`/todos/${invalidId}`)
+    .expect((a) => {
+      debugger
+    })
     .expect(404)
     .end(done)
   });
