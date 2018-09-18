@@ -25,7 +25,7 @@
   },
   "scripts": {
     "r": "nodemon server/server.js -e js,hbs",
-    "t": "nodemon --exec 'mocha **/*.test.js'",
+    "t": "export NODE_ENV=test && nodemon --exec 'mocha **/*.test.js'",
     "d": "nodemon --inspect-brk server/server.js",
     "dt": "npm run t -- --inspect-brk",
     "ds": "node inspect server/server.js",
