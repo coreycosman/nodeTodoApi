@@ -37,26 +37,43 @@ var UserSchema =  new mongoose.Schema({
   }]
 });
 
-UserSchema.methods.toJSON = function () {
-  var user = this;
-  var userObject = user.toObject();
-  return _.pick(userObject, ['_id', 'email'])
-};
+// INSTANCE METHODS:
 
-UserSchema.methods.generateAuthToken = function () {
-  var user =  this;
-  var access =  'auth';
-  var token = jwt.sign({_id: user._id.toHexString(), access}, '12345678' ).toString();
+  UserSchema.methods.toJSON = function () {
+    var user = this;
+    var userObject = user.toObject();
+    return _.pick(userObject, ['_id', 'email'])
+  };
 
-  user.tokens = user.tokens.concat([{access, token}]);
+  UserSchema.methods.generateAuthToken = function () {
+    var user =  this;
+    var access =  'auth';
+    var token = jwt.sign({_id: user._id.toHexString(), access}, '12345678' ).toString();
 
-  return user.save().then(() => {
-    return token
-  });
-};
+    user.tokens = user.tokens.concat([{access, token}]);
+
+    return user.save().then(() => {
+      return token
+    });
+  };
+
+// MODEL METHODS:
+
+  UserSchema.statics.findByToken = function (token) {
+    var User = this;
+    var decoded;
+    try {
+      decoded = jwt.verify(token, '12345678');
+    } catch (e) {
+      return Promise.reject();
+    }
+    return User.findOne({
+      '_id': decoded._id,
+      'tokens.token': token,
+      'tokens.access': 'auth'
+    });
+  };
 
 var User = mongoose.model('User', UserSchema);
-
-
 
 module.exports = {User};

@@ -13,10 +13,11 @@
   // Local Imports:
 
     require('./config/config');
-    require('./controllers/todos-controller');
+    // require('./controllers/todos-controller');
     var {mongoose} = require('./db/mongoose');
     var {Todo} = require('./models/todo');
     var {User} = require('./models/user');
+    var {authenticate} = require('./middleware/authenticate');
     var app = express();
 
 // ___________________________
@@ -191,3 +192,8 @@
           res.status(400).send(e);
         })
       })
+
+  // USERS GET (PRIVATE):
+    app.get('/users/me', authenticate, (req, res) => {
+      res.send(req.user);
+    });
