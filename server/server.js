@@ -1,6 +1,7 @@
 // IMPORTS:
 
-  // Library Imports
+  // Library Imports:
+
     const express = require('express');
     const fs = require('fs');
     const hbs = require('hbs');
@@ -9,8 +10,10 @@
     const bodyParser = require('body-parser');
     const {ObjectId} = require('mongodb');
 
-  // Local Imports
+  // Local Imports:
+
     require('./config/config');
+    require('./controllers/todos-controller');
     var {mongoose} = require('./db/mongoose');
     var {Todo} = require('./models/todo');
     var {User} = require('./models/user');
@@ -18,15 +21,16 @@
 
 // ___________________________
 
-// Handlebars:
+// VIEW ENGINE:
+
   hbs.registerPartials('./views/partials');
-  // views
   app.set('view engine', 'hbs');
   app.set('views', './views')
 
 // ___________________________
 
-// Port
+// PORT:
+
   const port = process.env.PORT
   app.listen(port, () => {
     console.log(`connected on port ${port}`);
@@ -34,7 +38,7 @@
 
 // ___________________________
 
-// Exports:
+// EXPORTS:
 
   module.exports = {app};
 
@@ -77,94 +81,113 @@
 
 // ___________________________
 
-// ROUTES:
+// CONTROLLERS:
 
-  // GET:
+  // TODOS CONTROLLER:
 
-    app.get('/todos', (req, res) => {
-      Todo.find().then((todos) => {
-        res.send({todos})
-      }, (e) => {
-        res.status(400).send(e)
+    // TODOS GET:
+
+      app.get('/todos', (req, res) => {
+        Todo.find().then((todos) => {
+          res.send({todos})
+        }, (e) => {
+          res.status(400).send(e)
+        });
       });
-    });
 
-    app.get('/todos/:id', (req, res) => {
-      var id = req.params.id;
+      app.get('/todos/:id', (req, res) => {
+        var id = req.params.id;
 
-      if (!ObjectId.isValid(id)) {
-        return res.status(404).send();
-      }
-
-      Todo.findById(id).then((todo) => {
-        if (!todo) {
+        if (!ObjectId.isValid(id)) {
           return res.status(404).send();
         }
-        res.send({todo})
-      }).catch((e) => {
-        res.status(400).send();
+
+        Todo.findById(id).then((todo) => {
+          if (!todo) {
+            return res.status(404).send();
+          }
+          res.send({todo})
+        }).catch((e) => {
+          res.status(400).send();
+        });
       });
-    });
 
-// ___________________________
+    // ___________________________
 
-  // POST
+    // TODOS POST:
 
-    app.post('/todos', (req, res) => {
-      var todo = new Todo({
-        text: req.body.text
+      app.post('/todos', (req, res) => {
+        var todo = new Todo({
+          text: req.body.text
+        });
+        todo.save().then((doc) => {
+          res.send(doc);
+        }, (e) => {
+          res.status(400).send(e);
+        });
       });
-      todo.save().then((doc) => {
-        res.send(doc);
-      }, (e) => {
-        res.status(400).send(e);
-      });
-    });
-  // ___________________________
+    // ___________________________
 
-  // PATCH
+    // TODOS PATCH:
 
-    app.patch('/todos/:id', (req, res) => {
-      var id = req.params.id;
-      var body = _.pick(req.body, ['text', 'completed']);
+      app.patch('/todos/:id', (req, res) => {
+        var id = req.params.id;
+        var body = _.pick(req.body, ['text', 'completed']);
 
-      if (!ObjectId.isValid(id)) {
-        return res.status(404).send();
-      }
-
-      if (_.isBoolean(body.completed) && body.completed) {
-        body.completedAt = new Date().getTime();
-      }
-      else {
-        body.completed = false
-        body.completedAt = null
-      }
-      Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
-        if (!todo) {
+        if (!ObjectId.isValid(id)) {
           return res.status(404).send();
         }
-        res.send({todo});
-      }).catch((e) => {
-        res.status(400).send();
+
+        if (_.isBoolean(body.completed) && body.completed) {
+          body.completedAt = new Date().getTime();
+        }
+        else {
+          body.completed = false
+          body.completedAt = null
+        }
+        Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+          if (!todo) {
+            return res.status(404).send();
+          }
+          res.send({todo});
+        }).catch((e) => {
+          res.status(400).send();
+        })
       })
-    })
 
-  // ___________________________
+    // ___________________________
 
-  // DELETE
+    // TODOS DELETE:
 
-    app.delete('/todos/:id', (req, res) => {
-      var id = req.params.id;
-      if (!ObjectId.isValid(id)) {
-        return res.status(404).send();
-      }
-
-      Todo.findByIdAndDelete(id).then((todo) => {
-        if (!todo) {
+      app.delete('/todos/:id', (req, res) => {
+        var id = req.params.id;
+        if (!ObjectId.isValid(id)) {
           return res.status(404).send();
         }
-        res.send({todo})
-      }).catch((e) => {
-        res.status(400).send();
-      });
-    })
+
+        Todo.findByIdAndDelete(id).then((todo) => {
+          if (!todo) {
+            return res.status(404).send();
+          }
+          res.send({todo})
+        }).catch((e) => {
+          res.status(400).send();
+        });
+      })
+  // ___________________________
+
+  // USERS CONTROLLER:
+
+  //   USERS POST:
+
+      app.post('/users', (req, res) => {
+        body = _.pick(req.body, ['email', 'password'])
+        var newUser = new User(body)
+        newUser.save().then(() => {
+          return newUser.generateAuthToken();
+        }).then((token) => {
+          res.header('x-auth', token).send(newUser)
+        }).catch((e) => {
+          res.status(400).send(e);
+        })
+      })

@@ -3,6 +3,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const {app} = require('../server/server');
 const {Todo} = require('../server/models/todo');
+const {User} = require('../server/models/user');
 const {ObjectId} = require('mongodb');
 const todos = [{
   _id: new ObjectId(),
@@ -22,6 +23,8 @@ beforeEach((done) => {
       return Todo.insertMany(todos)
   }).then(() => done());
 });
+
+// Todo Requests:
 
 describe('POST/todos', () => {
   it('should create new todo', (done) => {
@@ -151,7 +154,7 @@ describe('PATCH /todos/:id', () => {
     request(app)
     .patch(`/todos/${invalidId}`)
     .expect((a) => {
-      debugger
+
     })
     .expect(404)
     .end(done)
@@ -188,6 +191,53 @@ describe('DELETE /todos/:id', () => {
     request(app)
     .delete(`/todos/${invalidId}`)
     .expect(404)
+    .end(done)
+  });
+});
+
+// User Requests
+
+describe('POST /users', () => {
+
+  beforeEach((done) => {
+    User.deleteMany({}).then(() => done());
+  })
+
+  it('creates new user', (done) => {
+    var newUser = {
+      email: 'cosman.corey@gmail.com',
+      password: '12345678',
+      tokens: [{
+        access: "1234",
+        token: "1234"
+      }]
+    }
+
+    request(app)
+    .post('/users')
+    .send(newUser)
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.email).equal('cosman.corey@gmail.com')
+      expect(res.body.password).equal('12345678')
+    })
+    .end((err, res) => {
+      if (err) {
+        done(err)
+      }
+      User.find().then((users) => {
+        expect(users.length).equal(1)
+        expect(users[0].email).equal('cosman.corey@gmail.com')
+        done()
+      }).catch((e) => done(e))
+    })
+  });
+
+  it('sends 400 when body data invalid ', (done) => {
+    request(app)
+    .post('/users')
+    .send('')
+    .expect(400)
     .end(done)
   });
 });
