@@ -5,24 +5,13 @@ const {app} = require('../server/server');
 const {Todo} = require('../server/models/todo');
 const {User} = require('../server/models/user');
 const {ObjectId} = require('mongodb');
-const todos = [{
-  _id: new ObjectId(),
-  text: 'first test todo'
-}, {
-  _id: new ObjectId(),
-  text: 'second test todo',
-  completed: true,
-  completedAt: 1234
-}];
+const {todos, populateTodos, users,  populateUsers} = require('./seed/seed');
 const todoId = todos[0]._id.toHexString();
 const notFound = new ObjectId().toHexString();
 const invalidId = '12345678'
 
-beforeEach((done) => {
-  Todo.deleteMany({}).then(() => {
-      return Todo.insertMany(todos)
-  }).then(() => done());
-});
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 // Todo Requests:
 
@@ -197,46 +186,83 @@ describe('DELETE /todos/:id', () => {
 
 // User Requests
 
-describe('POST /users', () => {
-
-  beforeEach((done) => {
-    User.deleteMany({}).then(() => done());
-  })
-
-  it('creates new user', (done) => {
-    var newUser = {
-      email: 'cosman.corey@gmail.com',
-      password: '12345678',
-      tokens: [{
-        access: "1234",
-        token: "1234"
-      }]
-    }
-
+describe('GET users/me', () => {
+  it('should return user if authenticated', (done) => {
     request(app)
-    .post('/users')
-    .send(newUser)
+    .get('/users/me')
+    .set('x-auth', users[0].tokens[0].token)
     .expect(200)
     .expect((res) => {
-      expect(res.body.email).equal('cosman.corey@gmail.com')
-      expect(res.body.password).equal('12345678')
+      expect(res.body._id).equal(users[0]._id.toHexString());
+      expect(res.body.email).equal(users[0].email);
+    })
+    .end(done)
+  });
+
+  it('should return 401 if not authenticated', (done) => {
+    request(app)
+    .get('/users/me')
+    .expect(401)
+    .expect((res) => {
+      expect(res.body).include({})
+    })
+    .end(done)
+  });
+});
+
+describe('POST /users', () => {
+
+  var password = '12345678'
+
+  it('should create new user when body data valid', (done) => {
+    var email = 'asdfghj@gmail.com'
+    request(app)
+    .post('/users')
+    .send({email, password})
+    .expect(200)
+    .expect((res) => {
+      expect(res.headers['x-auth']).to.exist
+      expect(res.body._id).to.exist
+      expect(res.body.email).equal(email)
+      // expect(res.body.password).equal(password)
     })
     .end((err, res) => {
       if (err) {
-        done(err)
+        return done(err)
       }
       User.find().then((users) => {
-        expect(users.length).equal(1)
-        expect(users[0].email).equal('cosman.corey@gmail.com')
-        done()
-      }).catch((e) => done(e))
+        expect(users.length).equal(3)
+        expect(users[2].email).equal(email)
+        expect(users[2].password).to.not.equal(password)
+        done();
+      })
+      .catch((e) => done(e))
     })
   });
 
-  it('sends 400 when body data invalid ', (done) => {
+  it('should send 400 when body data empty', (done) => {
     request(app)
     .post('/users')
     .send('')
+    .expect(400)
+    .end(done)
+  });
+
+  it('should send 400 when body data invalid', (done) => {
+    var email = 'qwerty'
+    var password = '1234567'
+
+    request(app)
+    .post('/users')
+    .send({email, password})
+    .expect(400)
+    .end(done)
+  });
+
+  it('should send 400 when email in use', (done) => {
+    request(app)
+    .post('/users')
+    .send({email: users[0].email, password})
     .expect(400)
     .end(done)
   });
