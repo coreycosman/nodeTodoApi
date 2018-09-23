@@ -3,9 +3,12 @@
   // Library Imports:
 
     const express = require('express');
+    const http = require('http');
+    const socketIO = require('socket.io');
     const fs = require('fs');
     const hbs = require('hbs');
     const path = require('path');
+    const publicPath = path.join(__dirname, '../public');
     const todosController = require('./controllers/todos-controller');
     const usersController = require('./controllers/users-controller');
 
@@ -14,6 +17,8 @@
     require('./config/config');
     const {mongoose} = require('./db/mongoose');
     const app = express();
+    const server = http.createServer(app);
+    const io = socketIO(server);
 
 // CONTROLLER CONFIG:
     todosController(app);
@@ -32,7 +37,7 @@
 // PORT:
 
   const port = process.env.PORT
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`connected on port ${port}`);
   });
 
@@ -45,8 +50,13 @@
 // ___________________________
 
 // MIDDLEWARE:
-
-  // app.use(bodyParser.json());
+  app.use(express.static(publicPath));
+  io.on('connection', (socket) => {
+    console.log('new user connceted');
+    socket.on('disconnect', () => {
+    	console.log('disconnected from client');
+    });
+  });
 
   // server log
   // app.use((req, res, next) => {
