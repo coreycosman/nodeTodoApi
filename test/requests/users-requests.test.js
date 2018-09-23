@@ -92,3 +92,69 @@ describe('POST /users', () => {
     .end(done)
   });
 });
+
+describe('POST /users/login', () => {
+  it('should login user and return auth token', (done) => {
+    request(app)
+    .post('/users/login')
+    .send({email: users[0].email, password: users[0].password})
+    .expect(200)
+    .expect((res) => {
+      expect(res.headers['x-auth']).to.exist
+    })
+    .end((err, res) => {
+      if (err) {
+        return done(err);
+      }
+      User.findById(users[0]._id).then((user) => {
+        expect(user.tokens[1]).include({
+          access: 'auth',
+          token: res.headers['x-auth']
+        });
+        done();
+      }).catch((e) => done(e))
+    });
+  });
+
+  it('should send 400 when email user does not exist in db', (done) => {
+    var email = 'qwertyq@gmail.com'
+
+    request(app)
+    .post('/users/login')
+    .send({email, password: users[0].password})
+    .expect(400)
+    .expect((res) => {
+      expect(res.headers['x-auth']).to.not.exist
+    })
+    .end((err, res) => {
+      if (err) {
+        return done(err);
+      }
+      User.findById(users[0]._id).then((user) => {
+        expect(user.tokens[1].length).equal(0)
+        done();
+      }).catch((e) => done())
+    });
+  });
+
+  it('should send 400 when request password does not match db password', (done) => {
+    var password = '12456789'
+
+    request(app)
+    .post('/users/login')
+    .send({email: users[0].email, password})
+    .expect(400)
+    .expect((res) => {
+      expect(res.headers['x-auth']).to.not.exist
+    })
+    .end((err, res) => {
+      if (err) {
+        return done(err);
+      }
+      User.findById(users[0]._id).then((user) => {
+        expect(user.tokens[1].length).equal(0)
+        done();
+      }).catch((e) => done())
+    });
+  });
+});
