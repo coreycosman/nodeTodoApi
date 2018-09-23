@@ -55,5 +55,4 @@ module.exports = (app) => {
       res.satus(400).send();
     }
   });
-
 }
