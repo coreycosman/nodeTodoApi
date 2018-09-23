@@ -49,7 +49,7 @@ var UserSchema =  new mongoose.Schema({
   UserSchema.methods.generateAuthToken = function () {
     var user =  this;
     var access =  'auth';
-    var token = jwt.sign({_id: user._id.toHexString(), access}, '12345678' ).toString();
+    var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
     user.tokens = user.tokens.concat([{access, token}]);
 
@@ -87,7 +87,7 @@ var UserSchema =  new mongoose.Schema({
     var User = this;
     var decoded;
     try {
-      decoded = jwt.verify(token, '12345678');
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (e) {
       return Promise.reject();
     }
