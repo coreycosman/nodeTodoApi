@@ -53,28 +53,42 @@
 // MIDDLEWARE:
   app.use(express.static(publicPath));
 
-  // establish socket connection
+  // ESTABLISH SERVER SOCKET CONNECTION TO CLIENT
+
   io.on('connection', (socket) => {
 
-    // send welcome message to client on connnect
-    socket.emit('welcomeMessage', generateMessage('admin', 'welcome!'))
-    // broadcast new user joining to other users
-    socket.broadcast.emit('newUserJoin', generateMessage('admin', 'new user joined'))
-    // client connected
+    // SERVER LOGS
+
     console.log('new user connceted');
-    // client disconnected
+
+    // ___________________________
+
+    // SERVER DISCONNECTED TO CLIENT
+
     socket.on('disconnect', () => {
-    	console.log('disconnected from client');
+      console.log('disconnected from client');
     });
 
-    // receive new message from client
-    socket.on('createMessage', (message) => {
+    // ___________________________
+
+    // SERVER EVENT EMITTERS
+
+    socket.emit('newMessage', generateMessage('admin', 'welcome!'))
+
+    // ___________________________
+
+    // SERVER BROADCASTS
+
+    socket.broadcast.emit('newUserJoin', generateMessage('admin', 'new user joined'))
+
+    // ___________________________
+
+    // SERVER EVENT LISTENERS
+
+    socket.on('createMessage', (message, callback) => {
       console.log('createMessage', message);
-      // broadcasting new message to other users
-      socket.broadcast.emit('newMessage', {
-        text: message.text,
-        createdAt: new Date().getTime()
-      })
+      socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+      callback(`server and other clients received message: ${message.text}`);
     });
   });
 
