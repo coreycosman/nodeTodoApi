@@ -51,10 +51,21 @@
 
 // MIDDLEWARE:
   app.use(express.static(publicPath));
+
   io.on('connection', (socket) => {
+    // client connected
     console.log('new user connceted');
+    // client disconnected
     socket.on('disconnect', () => {
     	console.log('disconnected from client');
+    });
+    // new message notification sent to client
+    socket.emit('newMessage', {
+      text: 'sup'
+    });
+    // new message creation received from client
+    socket.on('createMessage', (createMessage) => {
+      console.log('createMessage', createMessage);
     });
   });
 
