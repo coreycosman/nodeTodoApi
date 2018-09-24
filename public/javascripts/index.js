@@ -6,6 +6,9 @@ socket.on('connect', function () {
   socket.emit('createMessage', {
     text: 'hello'
   });
+  socket.on('newUserJoin', function (message) {
+    console.log(message);
+  })
 });
 // disconnected to server
 socket.on('disconnect', function () {
@@ -16,3 +19,8 @@ socket.on('disconnect', function () {
 socket.on('newMessage', function (message) {
   console.log('new message', message);
 });
+
+// receive welcome message from server
+socket.on('welcomeMessage', function (message) {
+  console.log(message);
+})

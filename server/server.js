@@ -19,6 +19,7 @@
     const app = express();
     const server = http.createServer(app);
     const io = socketIO(server);
+    const {generateMessage} = require('./utils/message');
 
 // CONTROLLER CONFIG:
     todosController(app);
@@ -52,24 +53,28 @@
 // MIDDLEWARE:
   app.use(express.static(publicPath));
 
+  // establish socket connection
   io.on('connection', (socket) => {
+
+    // send welcome message to client on connnect
+    socket.emit('welcomeMessage', generateMessage('admin', 'welcome!'))
+    // broadcast new user joining to other users
+    socket.broadcast.emit('newUserJoin', generateMessage('admin', 'new user joined'))
     // client connected
     console.log('new user connceted');
     // client disconnected
     socket.on('disconnect', () => {
     	console.log('disconnected from client');
     });
-    // new message notification sent to client
-    socket.emit('newMessage', {
-      text: 'sup'
-    });
-    // new message creation received from client
+
+    // receive new message from client
     socket.on('createMessage', (message) => {
       console.log('createMessage', message);
-      io.emit('newMessage', {
+      // broadcasting new message to other users
+      socket.broadcast.emit('newMessage', {
         text: message.text,
         createdAt: new Date().getTime()
-      });
+      })
     });
   });
 
