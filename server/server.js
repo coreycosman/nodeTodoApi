@@ -87,7 +87,7 @@
 
     socket.on('createMessage', (message, callback) => {
       console.log('createMessage', message);
-      socket.broadcast.emit('newMessage', generateMessage(message.from, message.text));
+      io.emit('newMessage', generateMessage(message.from, message.text));
       callback(`server and other clients received message: ${message.text}`);
     });
   });

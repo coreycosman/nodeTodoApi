@@ -18,7 +18,7 @@ socket.on('disconnect', function () {
 
 // JQUERY EVENTS
 
-// EMMITTERS
+// EMITTERS
 
 jQuery('#message-form').on('submit', function (e) {
   e.preventDefault();
