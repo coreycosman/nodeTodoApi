@@ -64,8 +64,12 @@
       text: 'sup'
     });
     // new message creation received from client
-    socket.on('createMessage', (createMessage) => {
-      console.log('createMessage', createMessage);
+    socket.on('createMessage', (message) => {
+      console.log('createMessage', message);
+      io.emit('newMessage', {
+        text: message.text,
+        createdAt: new Date().getTime()
+      });
     });
   });
 
