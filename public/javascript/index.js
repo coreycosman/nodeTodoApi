@@ -27,6 +27,7 @@ jQuery('#message-form').on('submit', function (e) {
     from: 'client',
     text: jQuery('[name=message]').val()
   }, function (data) {
+    jQuery('[name=message]').val("")
     console.log(data);
   });
 });
