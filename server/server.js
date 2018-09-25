@@ -19,7 +19,7 @@
     const app = express();
     const server = http.createServer(app);
     const io = socketIO(server);
-    const {generateMessage} = require('./utils/message');
+    const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 // CONTROLLER CONFIG:
     todosController(app);
@@ -90,6 +90,16 @@
       io.emit('newMessage', generateMessage(message.from, message.text));
       callback(`server and other clients received message: ${message.text}`);
     });
+
+    socket.on('createLocationMessage', (coords) => {
+
+      io.emit('newLocationMessage', generateLocationMessage('admin', coords.latitude, coords.longitude));
+    })
+
+    // socket.on('createLocationMessage', (coords) => {
+    //
+    //   io.emit('newLocationMessage', generateMessage('admin', `${coords.latitude}, ${coords.longitude}`))
+    // })
   });
 
   // server log

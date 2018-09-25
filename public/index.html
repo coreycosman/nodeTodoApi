@@ -10,12 +10,17 @@
   <body>
     <p>welcome to the todo app</p>
 
+    <ul data="new-user"></ul>
+
     <ol id="messages"></ol>
 
     <form id="message-form">
       <input type="text" name="message" placeholder="Message">
       <button>Send</button>
     </form>
+
+    <button id="send-location">Send Location</button>
+    <div data="geo-link"></div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascript/libraries/jquery-3.3.1.min.js"></script>
