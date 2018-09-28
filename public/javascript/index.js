@@ -22,25 +22,35 @@ socket.on('disconnect', function () {
   // LISTENERS
 
   socket.on('newUserJoin', function (message) {
-    var li = $('<li></li>')
-    li.text(`${message.text}, ${message.createdAt}`)
-    $('[data=new-user]').append(li);
+    var formattedDateTime = moment(message.createdAt).format('MMM Do, YYYY, h:mm a')
+    var template = $('#user-join-message-template').html();
+    var html = Mustache.render(template, {
+      createdAt: formattedDateTime,
+      text: message.text
+    });
+    $('[data=new-user]').append(html);
   });
 
   socket.on('newMessage', function (message) {
-    var li = $('<li></li>');
-    li.text(`${message.from}: ${message.text}`)
-
-    $('#messages').append(li);
+    var formattedDateTime = moment(message.createdAt).format('MMM Do, YYYY, h:mm a')
+    var template = $('#message-template').html();
+    var html = Mustache.render(template, {
+      from: message.from,
+      text: message.text,
+      createdAt: formattedDateTime
+    });
+    $('#messages').append(html);
   });
 
   socket.on('newLocationMessage', function (message) {
-    var li = $('<li></li>');
-    var a = $("<a target='_blank'></a>").text('My Current Location');
-    a.attr('href', message.url)
-    li.text(`${message.from}: `);
-    li.append(a);
-    $('#messages').append(li);
+    var formattedDateTime = moment(message.createdAt).format('MMM Do, YYYY, h:mm a')
+    var template = $('#location-message-template').html();
+    var html = Mustache.render(template, {
+      from: message.from,
+      createdAt: formattedDateTime,
+      url: message.url
+    })
+    $('#messages').append(html);
   });
 
   // ___________________________
