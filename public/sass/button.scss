@@ -1,0 +1,18 @@
+@import 'variables';
+
+.button{
+  &--button-box{
+    width: 75vw;
+    height: 25vh;
+    float: right;
+    background-color: yellow;
+    margin-top: 30em;
+  }
+  &--submit{
+    background-color: $button-blue;
+    display: inline-block;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 5em;
+  }
+}

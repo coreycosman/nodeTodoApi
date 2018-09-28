@@ -1,7 +1,5 @@
 // IMPORTS:
-
   // Library Imports:
-
     const express = require('express');
     const http = require('http');
     const socketIO = require('socket.io');
@@ -11,6 +9,7 @@
     const publicPath = path.join(__dirname, '../public');
     const todosController = require('./controllers/todos-controller');
     const usersController = require('./controllers/users-controller');
+    const sass = require('node-sass-middleware');
 
   // Local Imports:
 
@@ -51,8 +50,16 @@
 // ___________________________
 
 // MIDDLEWARE:
-  app.use(express.static(publicPath));
+app.use(sass({
+    src: path.join(__dirname, '../public/sass'),
+    dest: path.join(__dirname, '../public/stylesheets'),
+    debug: true,
+    indentSyntax: true,
+    outputStyle: 'compressed',
+    prefix: '/stylesheets'
+  }));
 
+  app.use(express.static(publicPath));
   // ESTABLISH SERVER SOCKET CONNECTION TO CLIENT
 
   io.on('connection', (socket) => {
@@ -93,13 +100,8 @@
 
     socket.on('createLocationMessage', (coords) => {
 
-      io.emit('newLocationMessage', generateLocationMessage('admin', coords.latitude, coords.longitude));
+      socket.broadcast.emit('newLocationMessage', generateLocationMessage('admin', coords.latitude, coords.longitude));
     })
-
-    // socket.on('createLocationMessage', (coords) => {
-    //
-    //   io.emit('newLocationMessage', generateMessage('admin', `${coords.latitude}, ${coords.longitude}`))
-    // })
   });
 
   // server log

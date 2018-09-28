@@ -1,0 +1,23 @@
+@import 'variables';
+
+.text{
+  &--message-area{
+    position: fixed;
+    width: 75vw;
+    height: 100vh;
+    top: 14em;
+    background-image: #5da3a0;
+    right: 0em;
+  }
+  &--image-area{
+    position: fixed;
+    height: 75vh;
+    width: 75vw;
+    right: 0em;
+    bottom: 8em;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

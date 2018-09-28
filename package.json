@@ -15,6 +15,7 @@
     "lodash": "^4.17.11",
     "mongodb": "^3.1.1",
     "mongoose": "^5.2.14",
+    "node-sass-middleware": "^0.11.0",
     "path": "^0.12.7",
     "selenium-standalone": "^6.15.1",
     "socket.io": "^2.1.1",
@@ -33,7 +34,7 @@
     "t": "export NODE_ENV=test && nodemon --exec 'mocha test/**/*.test.js'",
     "d": "nodemon --inspect-brk server/server.js",
     "dt": "npm run t -- --inspect-brk",
-    "ds": "node inspect server/server.js",
+    "ds": "nodemon inspect server/server.js",
     "start": "node server/server.js"
   },
   "engines": {

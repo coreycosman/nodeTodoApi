@@ -22,17 +22,16 @@ socket.on('disconnect', function () {
   // LISTENERS
 
   socket.on('newUserJoin', function (message) {
-    // var message = message
     var li = $('<li></li>')
     li.text(`${message.text}, ${message.createdAt}`)
     $('[data=new-user]').append(li);
-  })
+  });
 
   socket.on('newMessage', function (message) {
     var li = $('<li></li>');
     li.text(`${message.from}: ${message.text}`)
 
-    $('#messages').append(li)
+    $('#messages').append(li);
   });
 
   socket.on('newLocationMessage', function (message) {
@@ -42,7 +41,7 @@ socket.on('disconnect', function () {
     li.text(`${message.from}: `);
     li.append(a);
     $('#messages').append(li);
-  })
+  });
 
   // ___________________________
 
@@ -51,11 +50,13 @@ socket.on('disconnect', function () {
   $('#message-form').on('submit', function (e) {
     e.preventDefault();
 
+    var messageTextBox = $('[name=message]')
+
     socket.emit('createMessage', {
       from: 'client',
-      text: $('[name=message]').val()
+      text: messageTextBox.val()
     }, function (data) {
-      $('[name=message]').val('')
+      messageTextBox.val('')
       console.log(data);
     });
   });
@@ -69,12 +70,16 @@ socket.on('disconnect', function () {
       return alert('Geolocation not supported by your browser');
     }
 
+    locationButton.attr('disabled', 'disabled').text('Sending Location...');
+
     navigator.geolocation.getCurrentPosition(function (position) {
+      locationButton.prop('disabled', false).text('Send Location');
       socket.emit('createLocationMessage', {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       })
     }, function () {
-      alert('unable to fetch location')
+      locationButton.prop('disabled', false);
+      alert('unable to fetch location').text('Send Location');
     });
   });

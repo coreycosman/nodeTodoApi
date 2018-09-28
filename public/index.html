@@ -3,27 +3,48 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/css-loader.css">
     <title>Document</title>
   </head>
   <body>
-    <p>welcome to the todo app</p>
+
+    <div class="banner--messages">
+      <p>welcome to the todo app</p>
+    </div>
+
+    <div class="sidebar--messages">
+      <p>hello</p>
+    </div>
 
     <ul data="new-user"></ul>
 
     <ol id="messages"></ol>
 
-    <form id="message-form">
-      <input type="text" name="message" placeholder="Message">
-      <button>Send</button>
-    </form>
 
-    <button id="send-location">Send Location</button>
-    <div data="geo-link"></div>
+    <div class="button--button-box">
+      <div class="button--submit">
+
+        <div class="button--form">
+          <form id="message-form">
+            <input type="text" name="message" placeholder="Message" autofocus autocomplete='off'>
+            <button>Send</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="button--submit">
+        <button id="send-location">Send Location</button>
+      </div>
+    </div>
+
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascript/libraries/jquery-3.3.1.min.js"></script>
     <script src="/javascript/index.js"></script>
+
   </body>
 </html>

@@ -1,0 +1,10 @@
+@import 'variables';
+
+.sidebar{
+  &--messages{
+    position: fixed;
+    height: 100vh;
+    width: 25vw;
+    background-color: $sidebar-orange;
+  }
+}

@@ -1,0 +1,11 @@
+@import 'variables';
+
+.banner{
+  &--messages{
+    background-color: $banner-burgundy;
+    height: 12.5vh;
+    width: 75vw;
+    float: right;
+    text-align: center;
+  }
+}
