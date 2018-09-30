@@ -13,6 +13,7 @@ function scrollToBottom () {
 
   if (clientHeight + scrollTop + newMessageHeight + lastMesageHeight >= scrollHeight) {
     messages.scrollTop(scrollHeight);
+    console.log('hello');
   }
 }
 // CLIENT CONNNECTED TO SERVER
