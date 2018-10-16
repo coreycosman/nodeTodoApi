@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "r": "nodemon server/server.js -e js,hbs",
+    "t": "export NODE_ENV=test && nodemon --exec 'mocha test/**/*.test.js'",
+    "d": "nodemon --inspect-brk server/server.js",
+    "dt": "npm run t -- --inspect-brk",
+    "ds": "nodemon inspect server/server.js",
+    "start": "node server/server.js",
+    "client": "npm run start --prefix server/client",
+    "dev": "concurrently 'npm run r' 'npm run client'"
+
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
@@ -29,14 +40,6 @@
     "rewire": "^4.0.1",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "supertest": "^3.1.0"
-  },
-  "scripts": {
-    "r": "nodemon server/server.js -e js,hbs",
-    "t": "export NODE_ENV=test && nodemon --exec 'mocha test/**/*.test.js'",
-    "d": "nodemon --inspect-brk server/server.js",
-    "dt": "npm run t -- --inspect-brk",
-    "ds": "nodemon inspect server/server.js",
-    "start": "node server/server.js"
   },
   "engines": {
     "node": "9.2.0"

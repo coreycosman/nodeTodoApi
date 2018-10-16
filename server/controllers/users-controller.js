@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const {ObjectId} = require('mongodb');
 
-module.exports = (app) => {
+module.exports = (app, publicPath) => {
 
 // MIDDLEWARE:
 
@@ -12,6 +12,13 @@ module.exports = (app) => {
   const {authenticate} = require('../middleware/authenticate');
 
 // ___________________________
+
+
+// GET /
+
+  app.get('/', (req,res) => {
+    res.render(publicPath + '/views/enter')
+  })
 
 // GET /users/me (PRIVATE)
 
@@ -24,6 +31,7 @@ module.exports = (app) => {
 // POST /users
 
   app.post('/users', (req, res) => {
+    debugger
     body = _.pick(req.body, ['email', 'password'])
     var newUser = new User(body)
     newUser.save().then(() => {

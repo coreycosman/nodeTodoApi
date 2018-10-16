@@ -18,7 +18,7 @@ module.exports = (app) => {
     Todo.find({
       _creator: req.user._id
     }).then((todos) => {
-      res.send({todos})
+      res.render('../../public/views/todos.hbs', {todos})
     }, (e) => {
       res.status(400).send(e)
     });
