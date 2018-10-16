@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/css-loader.css">
+    <title>Chat | Chat App</title>
+  </head>
+  <body>
+
+    <div class="banner--messages">
+
+    </div>
+
+    <div class="sidebar--messages">
+
+    </div>
+
+    <ul data="new-user"></ul>
+
+    <ol id="messages"></ol>
+
+
+    <div class="button--button-box">
+      <div class="button--submit">
+
+        <div class="button--form">
+          <form id="message-form">
+            <input type="text" name="message" placeholder="Message" autofocus autocomplete='off'>
+            <button>Send</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="button--submit">
+        <button id="send-location">Send Location</button>
+      </div>
+
+      <div class="button--submit">
+        <button id="leave-room">Leave Room</button>
+      </div>
+    </div>
+
+    <script id="user-join-message-template" type="text/template">
+      <li class="message">
+        <div class="message__title">
+          <span>{{createdAt}}</span>
+        </div>
+
+        <div class="message__body">
+          <p>{{text}}</p>
+        </div>
+      </li>
+    </script>
+
+    <script id="message-template" type="text/template">
+      <li class="message">
+        <div class="message__title">
+          <h4>{{from}}</h4>
+          <span>{{createdAt}}</span>
+        </div>
+
+        <div class="message__body">
+          <p>{{text}}</p>
+        </div>
+      </li>
+    </script>
+
+    <script id="location-message-template" type="text/template">
+      <li class="message">
+        <div class="message__title">
+          <h4>{{from}}</h4>
+          <span>{{createdAt}}</span>
+        </div>
+
+        <div class="message__body">
+          <p>
+            <a target='_blank' href="{{url}}">My Current Location</a>
+          </p>
+        </div>
+      </li>
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascript/libraries/jquery-3.3.1.min.js"></script>
+    <script src="/javascript/libraries/moment.js"></script>
+    <script src="/javascript/libraries/mustache.js"></script>
+    <script src="/javascript/libraries/deparam.js"></script>
+    <script src="/javascript/chat.js"></script>
+
+  </body>
+</html>

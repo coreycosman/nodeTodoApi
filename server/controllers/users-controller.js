@@ -31,8 +31,7 @@ module.exports = (app, publicPath) => {
 // POST /users
 
   app.post('/users', (req, res) => {
-    debugger
-    body = _.pick(req.body, ['email', 'password'])
+    var body = _.pick(req.body, ['email', 'password'])
     var newUser = new User(body)
     newUser.save().then(() => {
       return newUser.generateAuthToken();
