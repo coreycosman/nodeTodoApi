@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const _ = require('lodash');
 const {ObjectId} = require('mongodb');
 
-module.exports = (app) => {
+module.exports = (app, publicPath) => {
+  const views = publicPath + '/views'
 
 // MIDDLEWARE:
 
@@ -18,7 +19,7 @@ module.exports = (app) => {
     Todo.find({
       _creator: req.user._id
     }).then((todos) => {
-      res.render('../../public/views/todos.hbs', {todos})
+      res.render(views + '/todos', {todos})
     }, (e) => {
       res.status(400).send(e)
     });

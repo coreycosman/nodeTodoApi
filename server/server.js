@@ -54,14 +54,14 @@
 
 // MIDDLEWARE:
   // SASS CONFIG:
-    // app.use(sass({
-    //     src: path.join(__dirname, '../public/sass'),
-    //     dest: path.join(__dirname, '../public/stylesheets'),
-    //     debug: true,
-    //     indentSyntax: true,
-    //     outputStyle: 'compressed',
-    //     prefix: '/stylesheets'
-    //   }));
+    app.use(sass({
+        src: path.join(__dirname, './client/public/sass'),
+        dest: path.join(__dirname, './client/public/stylesheets'),
+        debug: true,
+        indentSyntax: true,
+        outputStyle: 'compressed',
+        prefix: '/stylesheets'
+      }));
 
   app.use(express.static(publicPath));
 

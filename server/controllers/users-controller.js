@@ -4,26 +4,28 @@ const _ = require('lodash');
 const {ObjectId} = require('mongodb');
 
 module.exports = (app, publicPath) => {
-
+  const views = publicPath + '/views'
 // MIDDLEWARE:
 
   app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
 
   const {authenticate} = require('../middleware/authenticate');
 
 // ___________________________
 
 
-// GET /
+// GET ROOT /
 
   app.get('/', (req,res) => {
-    res.render(publicPath + '/views/enter')
+    res.render(views + '/enter')
   })
 
 // GET /users/me (PRIVATE)
 
   app.get('/users/me', authenticate, (req, res) => {
-    res.send(req.user);
+    var userName = req.user
+    res.render(views + '/user', {name: userName});
   });
 
 // ___________________________
@@ -34,9 +36,10 @@ module.exports = (app, publicPath) => {
     var body = _.pick(req.body, ['email', 'password'])
     var newUser = new User(body)
     newUser.save().then(() => {
+      res.render(views + '/todos')
       return newUser.generateAuthToken();
     }).then((token) => {
-      res.header('x-auth', token).send(newUser)
+      res.header('x-auth', token).send.redirect('./users/me')
     }).catch((e) => {
       res.status(400).send(e);
     })
