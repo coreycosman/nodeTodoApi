@@ -8,8 +8,8 @@ module.exports = (app, publicPath) => {
 
 // MIDDLEWARE:
 
-  app.use(bodyParser.json());
-  const {authenticate} = require('../middleware/authenticate');
+  app.use(bodyParser.json({ type: '*/*' }));
+  app.use(bodyParser.urlencoded({ extended: false }));
 
 // ___________________________
 
