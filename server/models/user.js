@@ -4,15 +4,13 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
-debugger
 const bcrypt = require('bcryptjs');
 
 var UserSchema =  new mongoose.Schema({
   email: {
     type: String,
-    required: true,
+    required: [true, 'email must be present'],
     trim: true,
-    minlength: 1,
     unique: true,
     lowercase: true,
     validate: {
@@ -54,11 +52,10 @@ var UserSchema =  new mongoose.Schema({
     const timestamp =  new Date().getTime();
     const token = jwt.sign({
       sub: user.id,
-      access,
       iat: timestamp
     }, process.env.JWT_SECRET).toString();
 
-    user.tokens = user.tokens.concat([{ access, token }]);
+    user.tokens = user.tokens.concat([{ access, token}]);
     return token;
   };
 

@@ -32,9 +32,9 @@
 // ___________________________
 
 // CONTROLLER CONFIG:
+  const { mongoose } = require('./db/mongoose');
   const todosController = require('./controllers/todos-controller');
   const usersController = require('./controllers/users-controller');
-  const { mongoose } = require('./db/mongoose');
   const ioController = require('./controllers/io-controller');
   const router = require('./router');
 

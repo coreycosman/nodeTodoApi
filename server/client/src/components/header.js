@@ -1,6 +1,27 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+// import Logout from "./Logout"
 
 class Header extends Component {
+
+  renderButton() {
+    if (this.props.registered !== '' || this.props.loggedIn !== '') {
+      return (
+      <li className="nav--list--item">
+          <button>
+            Logout
+          </button>
+        </li>
+      );
+    }
+  }
+  // renderLogout() {
+  //   if (this.props.registered !== '' || this.props.loggedIn !== '') {
+  //     return <Logout />
+  //   }
+  // }
+
   render() {
     return (
       <div className='nav'>
@@ -9,16 +30,24 @@ class Header extends Component {
         </a>
         <ul className="nav--list">
           <li className="nav--list--item">
-            <a>Login</a>
+            <Link to="/users/login">Login</Link>
           </li>
 
           <li className="nav--list--item">
-            <a>Signup</a>
+            <Link to="/users">Signup</Link>
           </li>
+          {this.renderButton()}
         </ul>
       </div>
     );
   }
 }
 
-export default Header;
+function mapStateToProps(state) {
+  return {
+    registered: state.auth.authenticated,
+    loggedIn: state.login.loggedIn
+  };
+}
+
+export default connect(mapStateToProps)(Header);

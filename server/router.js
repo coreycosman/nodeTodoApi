@@ -3,17 +3,19 @@ const passportService = require('./services/passport');
 const passport = require('passport');
 const authenticationController = require('./controllers/authentication-controller');
 const usersController = require('./controllers/users-controller');
+const dashboardController = require('./controllers/dashboard-controller');
+
 // MIDDLEWARE:
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireSignIn = passport.authenticate('local', { session: false });
+
 // ROUTER:
 module.exports = (app) => {
-  app.get('/hello', requireAuth, authenticationController.root);
-  app.post('/signup', authenticationController.signup);
-
-
   // Users Controller Routes:
-  app.post('/users', requireAuth, usersController.signup)
+  app.post('/users', usersController.signup)
   app.post('/users/login', requireSignIn, usersController.login)
+  // app.delete('/users/logout', requireAuth, usersController.logout)
 
+  // Dashboard Controller Routes
+  app.get('/dashboard', requireAuth, dashboardController.dashboard)
 }
