@@ -1,33 +1,43 @@
 const { User } = require('../models/user');
 const _ = require('lodash');
-// const validateregisterInput = require('../validation/register');
-// const { ObjectId } = require('mongodb');
+const validateRegisterInput = require('../validation/register');
+const validateLoginInput = require('../validation/login');
 
 exports.signup = (req, res, next) => {
-  // const { errors, isValid } = validateregisterInput(body)
-
-  // if(!isValid) {
-  //   return res.status(400).json(errors);
-  // }
-  const body = _.pick(req.body, ['email', 'password'])
+  const body = _.pick(req.body, ['email', 'password', 'confirmation'])
   const newUser = new User(body);
   newUser.generateAuthToken();
   newUser.save()
     .then(user => res.json(user.tokens[0].token))
     .catch(e => {
-      if (e.name === 'MongoError' && e.code === 11000) {
-        res.status(422).json('email in use')
+      let { errors, isValid } = validateRegisterInput(body, e)
+      if(!isValid) {
+        return res.status(400).json(errors);
       } else {
-        console.log(e);
-        res.status(400).send(e)
+        return res.status(500).json('please try again')
       }
     })
 }
 
 exports.login = (req, res, next) => {
-  // req.user.generateAuthToken()
-  res.json(req.user.tokens[0].token)
+  // const body = _.pick(req.body, ['email', 'password'])
+  // let { errors, isValid } = validateLoginInput(body)
+  // if(!isValid) {
+  //   return res.status(400).json(errors);
+  // }
+  res.json(req.user.generateAuthToken())
 }
+
+// exports.login = (req, res, err, next) => {
+//   req.user.generateAuthToken()
+//     .then(token => res.json(token))
+//     .catch(e => {
+//       let { errors, isValid } = validateLoginInput(body, e)
+//       if(!isValid) {
+//         return res.status(400).json(errors);
+//       }
+//     })
+// }
 
 // exports.logout = (req, res, next) => {
 //   debugger

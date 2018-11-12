@@ -1,16 +1,14 @@
 import axios from 'axios'
-import { FETCH_USER, SET_CURRENT_USER, AUTH_ERROR } from "./types";
-
-// export const fetchUser = () => async dispatch =>
-//   ({ type: FETCH_USER, payload: await axios.get('/users/me').data});
+import { SIGNUP_USER, AUTH_ERROR, GET_ERRORS } from "./types";
 
 export const signup = (formProps, callback) => async dispatch => {
   try {
     const response = await axios.post('/users', formProps)
-    dispatch({ type: SET_CURRENT_USER, payload: response.data.token});
+    console.log(response.data);
+    dispatch({ type: SIGNUP_USER, payload: response.data});
     // callback for route redirect
     callback();
   } catch (e) {
-    dispatch({ type: AUTH_ERROR, payload: 'email in use' })
+    dispatch({ type: GET_ERRORS, payload: e.response.data })
   }
 };

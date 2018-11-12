@@ -3,6 +3,7 @@ import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import * as actions from "../actions/signup-action";
 import { compose } from "redux"
+import PropTypes from "prop-types";
 
 class Signup extends Component {
   onSubmit = (formProps) => {
@@ -25,6 +26,8 @@ class Signup extends Component {
             autoComplete="none"
           />
         </fieldset>
+        <div>{ this.props.errors.email }</div>
+
         <fieldset>
           <label>Password</label>
           <Field
@@ -34,15 +37,35 @@ class Signup extends Component {
             autoComplete="none"
           />
         </fieldset>
-        <div>{ this.props.errorMessage }</div>
+        <div>{ this.props.errors.password }</div>
+
+        <fieldset>
+          <label>Password Confirmation</label>
+          <Field
+            name="confirmation"
+            type="password"
+            component="input"
+            autoComplete="none"
+          />
+        </fieldset>
+        <div>{ this.props.errors.confirmation }</div>
         <button>Signup</button>
       </form>
     );
   }
 }
 
+Signup.propTypes = {
+  signup: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
 function mapStateToProps(state) {
-  return { errorMessage: state.auth.errorMessage };
+
+  return {
+    auth: state.auth,
+    errors: state.errors.errorsObject
+  };
 }
 
 export default compose(

@@ -15,7 +15,8 @@ module.exports = (app) => {
   app.post('/users', usersController.signup)
   app.post('/users/login', requireSignIn, usersController.login)
   // app.delete('/users/logout', requireAuth, usersController.logout)
-
   // Dashboard Controller Routes
   app.get('/dashboard', requireAuth, dashboardController.dashboard)
+
+  // app.get('/test', requireAuth, dashboardController.dashboard)
 }

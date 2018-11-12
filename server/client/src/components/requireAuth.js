@@ -11,17 +11,21 @@ export default ChildComponent => {
     componentDidUpdate() {
       this.shouldNavigateAway();
     }
+
     shouldNavigateAway() {
-      if (this.props.auth === '') {
+      if (this.props.auth === false) {
         this.props.history.push('/');
       }
     }
+
     render() {
       return <ChildComponent {...this.props} />;
     }
   }
   function mapStateToProps(state) {
-    return { auth: state.auth.authenticated };
+    return {
+      auth: state.auth.loggedIn
+    };
   }
   return connect(mapStateToProps)(ComposedComponent);
 };

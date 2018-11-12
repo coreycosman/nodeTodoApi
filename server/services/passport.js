@@ -29,16 +29,18 @@ const jwtOptions = {
   secretOrKey: process.env.JWT_SECRET
 };
 
-const jwtLogin = new Strategy(jwtOptions, function(payload, done){
-  User.findById(payload.sub, function(err, user) {
-    if (err) { return done(err, false); }
-
-    if (user) {
-      done(null, user);
-    } else {
-      done(null, false);
-    }
-  });
+const jwtLogin = new Strategy(jwtOptions, (payload, done) => {
+  console.log(payload);
+  User.findById(payload.sub)
+    .then(user => {
+      if (user) {
+        done(null, user);
+      }
+      return done(null, false);
+    })
+    .catch(e => {
+      return done(e, false)
+    })
 });
 
 passport.use(jwtLogin);

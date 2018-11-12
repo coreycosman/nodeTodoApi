@@ -9,19 +9,21 @@ const bcrypt = require('bcryptjs');
 var UserSchema =  new mongoose.Schema({
   email: {
     type: String,
-    required: [true, 'email must be present'],
     trim: true,
-    unique: true,
     lowercase: true,
-    validate: {
-      validator: validator.isEmail,
-      message: `{VALUE} is not a valid email`
-    }
+    required: true,
+    unique: true
   },
 
   password: {
     type: String,
-    require: true,
+    required: true,
+    minlength: 8
+  },
+
+  confirmation: {
+    type: String,
+    required: true,
     minlength: 8
   },
 
@@ -48,10 +50,11 @@ var UserSchema =  new mongoose.Schema({
 
   UserSchema.methods.generateAuthToken = function () {
     user = this;
-    const access =  'auth';
+    const access =  'authenticated';
     const timestamp =  new Date().getTime();
     const token = jwt.sign({
       sub: user.id,
+      expiresIn: 3600,
       iat: timestamp
     }, process.env.JWT_SECRET).toString();
 
@@ -106,6 +109,23 @@ var UserSchema =  new mongoose.Schema({
       next();
     }
   });
+
+// Class Methods:
+
+UserSchema.statics.findByToken = function (token) {
+  // var User = this;
+  // var decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (e) {
+    return Promise.reject();
+  }
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  });
+};
 
 const User = mongoose.model('User', UserSchema);
 

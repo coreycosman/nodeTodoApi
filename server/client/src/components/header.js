@@ -5,17 +5,17 @@ import { Link } from "react-router-dom";
 
 class Header extends Component {
 
-  renderButton() {
-    if (this.props.registered !== '' || this.props.loggedIn !== '') {
-      return (
-      <li className="nav--list--item">
-          <button>
-            Logout
-          </button>
-        </li>
-      );
-    }
-  }
+  // renderButton() {
+  //   if (this.props.registered !== '' || this.props.loggedIn !== '') {
+  //     return (
+  //     <li className="nav--list--item">
+  //         <button>
+  //           Logout
+  //         </button>
+  //       </li>
+  //     );
+  //   }
+  // }
   // renderLogout() {
   //   if (this.props.registered !== '' || this.props.loggedIn !== '') {
   //     return <Logout />
@@ -36,18 +36,19 @@ class Header extends Component {
           <li className="nav--list--item">
             <Link to="/users">Signup</Link>
           </li>
-          {this.renderButton()}
         </ul>
       </div>
     );
   }
 }
 
+// { this.renderButton() }
 function mapStateToProps(state) {
   return {
-    registered: state.auth.authenticated,
+    // registered: state.auth.authenticated,
     loggedIn: state.login.loggedIn
   };
 }
 
-export default connect(mapStateToProps)(Header);
+export default Header
+// export default connect(mapStateToProps)(Header);

@@ -5,7 +5,7 @@
 //   try {
 //     const response = await
 //     axios.delete('/users/logout')
-//     dispatch({ type: LOGOUT_USER, payload: response.data })
+//     dispatch({ type: LOGOUT_USER, payload: 'out' })
 //     // callback for route redirect
 //     callback();
 //   } catch(e) {

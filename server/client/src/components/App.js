@@ -10,6 +10,7 @@ import Dashboard from "./Dashboard";
 import Landing from "./Landing";
 import Signup from "./Signup";
 import Login from "./Login";
+// import Test from "./Test";
 // local
 import  '../sass/css-loader.scss';
 import * as actions from "../actions/index";
