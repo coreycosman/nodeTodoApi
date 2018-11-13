@@ -1,4 +1,4 @@
-import { SIGNUP_USER, LOGIN_USER } from "../actions/types";
+import { SIGNUP_USER, LOGIN_USER, SET_CURRENT_USER } from "../actions/types";
 
 const INITIAL_STATE = {
   loggedIn: false,
@@ -10,7 +10,7 @@ export default function(state = INITIAL_STATE, action) {
     case SIGNUP_USER:
       return {...state, loggedIn: true, token: action.payload};
     case LOGIN_USER:
-      return { ...state, loggedIn: true, token: action.payload };
+      return { ...state, loggedIn: true, user: action.payload };
   default:
     return state;
   }
