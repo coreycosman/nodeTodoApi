@@ -1,36 +1,23 @@
-// import React, { Component } from "react";
-// import { reduxForm, Field } from "redux-form";
-// import { connect } from "react-redux";
-// import * as actions from "../actions/logout-action";
-// import { compose } from "redux"
-//
-// class Logout extends Component {
-//   handleSubmit() {
-//     this.props.logout(() => {
-//       this.props.history.push('/');
-//     });
-//   };
-//
-//   render() {
-//     // const { handleSubmit } = this.props;
-//     return (
-//       <li class="nav--list--item" >
-//         <button onSubmit={ this.handleSubmit() }>
-//           Logout
-//         </button>
-//       </li>
-//     );
-//   }
-// }
-//
-// // function mapStateToProps(state) {
-// //   return { errorMessage: state.auth.errorMessage };
-// // }
-//
-// export default connect(null, actions)(Logout);
-// // export default compose(
-// //   connect(mapStateToProps, actions),
-// //   reduxForm({
-// //     form: 'logout'
-// //   })
-// // )(Logout);
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import * as actions from "../actions/auth-action";
+import { compose } from "redux"
+import { Link } from "react-router-dom";
+
+class Logout extends Component {
+  handleLogout() {
+    this.props.logout()
+  };
+
+  render() {
+    return (
+      <li class="nav--list--item">
+        <Link onClick={this.handleLogout.bind(this)} to="/">
+          Logout
+        </Link>
+      </li>
+    );
+  }
+}
+
+export default connect(null, actions)(Logout);

@@ -8,7 +8,7 @@ exports.signup = (req, res, next) => {
   const newUser = new User(body);
   newUser.generateAuthToken();
   newUser.save()
-    .then(user => res.json(user.tokens[0].token))
+    .then(user => res.json(user.auth.token))
     .catch(e => {
       let { errors, isValid } = validateRegisterInput(body, e)
       if(!isValid) {
@@ -20,30 +20,18 @@ exports.signup = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
-  // const body = _.pick(req.body, ['email', 'password'])
-  // let { errors, isValid } = validateLoginInput(body)
-  // if(!isValid) {
-  //   return res.status(400).json(errors);
-  // }
-  res.json(req.user.generateAuthToken())
+  let token = req.user.generateAuthToken()
+  req.user.update({
+    $set: {
+      auth: {
+        token
+      }
+    }
+  }).then(() => res.json(token))
+  .catch(e => console.log(e))
 }
 
-// exports.login = (req, res, err, next) => {
-//   req.user.generateAuthToken()
-//     .then(token => res.json(token))
-//     .catch(e => {
-//       let { errors, isValid } = validateLoginInput(body, e)
-//       if(!isValid) {
-//         return res.status(400).json(errors);
-//       }
-//     })
-// }
 
-// exports.logout = (req, res, next) => {
-//   debugger
-//   // var token = req.user.tokens[0].token
-//   // req.user.removeToken(req.token)
-// }
 
 // ________________________________________________________________________
 // WITHOUT PASSPORT:

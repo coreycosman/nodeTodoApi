@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
-import * as actions from "../actions/login-action";
+import * as actions from "../actions/auth-action";
 import { compose } from "redux"
 
 class Login extends Component {
+  componentDidMount() {
+    if(this.props.auth.loggedIn) {
+      this.props.history.push('/dashboard')
+    }
+  }
+
   onSubmit = (formProps) => {
     this.props.login(formProps, () => {
       this.props.history.push('/dashboard');
@@ -34,7 +40,7 @@ class Login extends Component {
             autoComplete="none"
           />
         </fieldset>
-        <div>{ this.props.errorMessage }</div>
+        <div>{ this.props.auth.errorMessage }</div>
         <button>Signup</button>
       </form>
     );
@@ -42,7 +48,7 @@ class Login extends Component {
 }
 
 function mapStateToProps(state) {
-  return { errorMessage: state.auth.errorMessage };
+  return { auth: state.auth }
 }
 
 export default compose(

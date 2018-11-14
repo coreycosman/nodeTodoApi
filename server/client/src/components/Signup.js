@@ -1,11 +1,17 @@
 import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
-import * as actions from "../actions/signup-action";
+import * as actions from "../actions/auth-action";
 import { compose } from "redux"
 import PropTypes from "prop-types";
 
 class Signup extends Component {
+  componentDidMount() {
+    if(this.props.auth.loggedIn) {
+      this.props.history.push('/dashboard')
+    }
+  }
+
   onSubmit = (formProps) => {
     this.props.signup(formProps, () => {
       this.props.history.push('/dashboard');

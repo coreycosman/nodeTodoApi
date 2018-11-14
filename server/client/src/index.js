@@ -3,30 +3,35 @@ import { createStore, applyMiddleware } from 'redux';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import reduxThunk from "redux-thunk";
-import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
-import { PersistGate } from 'redux-persist/integration/react'
 import { composeWithDevTools } from 'redux-devtools-extension';
+import jwtDecode from 'jwt-decode'
 
+import setAuthToken from './utils/set-auth-token'
 import App from './components/App';
 import rootReducer from './reducers';
+import { setCurrentUser } from './actions/auth-action'
 
-const persistConfig = {
-  key: 'root',
-  storage
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer)
 const middleware = [reduxThunk]
 const composeEnhancers = composeWithDevTools({});
-const store = createStore(persistedReducer, {}, composeEnhancers(applyMiddleware(...middleware)));
-const persistor = persistStore(store);
+const store = createStore(rootReducer, {}, composeEnhancers(applyMiddleware(...middleware)));
+
+
+if (localStorage.jwtToken) {
+  setAuthToken(localStorage.jwtToken)
+  const decoded = jwtDecode(localStorage.jwtToken)
+  decoded.token = localStorage.jwtToken
+  store.dispatch(setCurrentUser(decoded))
+
+  // const currentTime = Date.now()
+  // if (decoded.expiresIn < currentTime) {
+  //   window.location.href = '/'
+  // }
+}
+
 
 ReactDOM.render(
   <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <App />
-    </PersistGate>
+    <App />
   </Provider>,
   document.querySelector('#root')
 );

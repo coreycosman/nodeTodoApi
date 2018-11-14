@@ -1,16 +1,15 @@
-import { SIGNUP_USER, LOGIN_USER, SET_CURRENT_USER } from "../actions/types";
+import { SET_CURRENT_USER, LOGOUT_USER } from "../actions/types";
+import isEmpty from '../utils/is-empty'
 
 const INITIAL_STATE = {
   loggedIn: false,
-  token: ''
+  user: ''
 }
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case SIGNUP_USER:
-      return {...state, loggedIn: true, token: action.payload};
-    case LOGIN_USER:
-      return { ...state, loggedIn: true, user: action.payload };
+    case SET_CURRENT_USER:
+      return {...state, loggedIn: !isEmpty(action.payload), user: action.payload};
   default:
     return state;
   }

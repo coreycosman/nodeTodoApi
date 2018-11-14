@@ -27,17 +27,30 @@ var UserSchema =  new mongoose.Schema({
     minlength: 8
   },
 
-  tokens: [{
-    access: {
+  auth: {
+    token: {
       type: String,
       required: true
     },
 
-    token: {
+    access: {
       type: String,
       required: true
     }
-  }]
+  }
+  // tokens: [{
+  //   access: {
+  //     type: String,
+  //     default: 'unauthorized',
+  //     required: true
+  //   },
+  //
+  //   token: {
+  //     type: String,
+  //     default: '',
+  //     required: true
+  //   }
+  // }]
 });
 
 // INSTANCE METHODS:
@@ -49,26 +62,28 @@ var UserSchema =  new mongoose.Schema({
   };
 
   UserSchema.methods.generateAuthToken = function () {
-    user = this;
-    const access =  'authenticated';
+    const access = 'authenticated'
     const timestamp =  new Date().getTime();
     const token = jwt.sign({
-      sub: user.id,
+      sub: this.id,
       expiresIn: 3600,
       iat: timestamp
     }, process.env.JWT_SECRET).toString();
 
-    user.tokens = user.tokens.concat([{ access, token}]);
-    return token;
+    Object.assign(this.auth, { token, access })
+    return token
   };
 
-  UserSchema.methods.removeToken = function (token) {
-    var user = this;
-    return user.update({
-      $pull: {
-        tokens: {token}
+  UserSchema.methods.removeToken = function () {
+    return this.update({
+      $set: {
+        auth: {
+          token: '',
+          access: 'unauthorized'
+        }
       }
     })
+    this.update()
   }
 
 

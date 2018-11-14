@@ -25,12 +25,11 @@ const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
 // Strategy
 
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('Authorization'),
+  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
   secretOrKey: process.env.JWT_SECRET
 };
 
 const jwtLogin = new Strategy(jwtOptions, (payload, done) => {
-  console.log(payload);
   User.findById(payload.sub)
     .then(user => {
       if (user) {
