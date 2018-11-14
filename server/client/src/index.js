@@ -9,7 +9,7 @@ import jwtDecode from 'jwt-decode'
 import setAuthToken from './utils/set-auth-token'
 import App from './components/App';
 import rootReducer from './reducers';
-import { setCurrentUser } from './actions/auth-action'
+import { setCurrentUser, logout } from './actions/auth-action'
 
 const middleware = [reduxThunk]
 const composeEnhancers = composeWithDevTools({});
@@ -22,10 +22,11 @@ if (localStorage.jwtToken) {
   decoded.token = localStorage.jwtToken
   store.dispatch(setCurrentUser(decoded))
 
-  // const currentTime = Date.now()
-  // if (decoded.expiresIn < currentTime) {
-  //   window.location.href = '/'
-  // }
+  const currentTime = Date.now()
+  if (decoded.iat < currentTime - 3600) {
+    store.dispatch(logout())
+    window.location.href = '/'
+  }
 }
 
 
