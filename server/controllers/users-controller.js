@@ -11,7 +11,7 @@ exports.signup = (req, res, next) => {
     .then(user => res.json(user.auth.token))
     .catch(e => {
       let { errors, isValid } = validateRegisterInput(body, e)
-      if(!isValid) {
+      if (!isValid) {
         return res.status(400).json(errors);
       } else {
         return res.status(500).json('please try again')
@@ -20,16 +20,33 @@ exports.signup = (req, res, next) => {
 }
 
 exports.login = (req, res, next) => {
-  let token = req.user.generateAuthToken()
-  req.user.update({
-    $set: {
-      auth: {
-        token
+  let body = _.pick(req.body, ['email', 'password'])
+  User.verifyLogin(body.email, body.password)
+    .then(user => {
+      console.log(user)
+      let token = user.generateAuthToken()
+      user.update({
+        $set: {
+          auth: {
+            token
+          }
+        }
+      }).then(() => res.json(token))
+      .catch(e => {
+        console.log(e);
+      })
+    })
+    .catch(verifyError => {
+      let { errors, isValid } = validateLoginInput(body, verifyError)
+      if (!isValid) {
+        return res.status(400).json(errors)
       }
-    }
-  }).then(() => res.json(token))
-  .catch(e => console.log(e))
+    })
 }
+
+
+
+
 
 
 

@@ -31,6 +31,8 @@ class Login extends Component {
             autoComplete="none"
           />
         </fieldset>
+        <div>{ this.props.errors.email }</div>
+
         <fieldset>
           <label>Password</label>
           <Field
@@ -40,7 +42,8 @@ class Login extends Component {
             autoComplete="none"
           />
         </fieldset>
-        <div>{ this.props.auth.errorMessage }</div>
+        <div>{ this.props.errors.password }</div>
+        
         <button>Signup</button>
       </form>
     );
@@ -48,7 +51,10 @@ class Login extends Component {
 }
 
 function mapStateToProps(state) {
-  return { auth: state.auth }
+  return {
+    auth: state.auth,
+    errors: state.errors.errorsObject
+  }
 }
 
 export default compose(

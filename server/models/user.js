@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
+const isEmpty =  require('../validation/is-empty');
+
 var UserSchema =  new mongoose.Schema({
   email: {
     type: String,
@@ -38,28 +40,10 @@ var UserSchema =  new mongoose.Schema({
       required: true
     }
   }
-  // tokens: [{
-  //   access: {
-  //     type: String,
-  //     default: 'unauthorized',
-  //     required: true
-  //   },
-  //
-  //   token: {
-  //     type: String,
-  //     default: '',
-  //     required: true
-  //   }
-  // }]
 });
 
 // INSTANCE METHODS:
 
-  UserSchema.methods.toJSON = function () {
-    var user = this;
-    var userObject = user.toObject();
-    return _.pick(userObject, ['_id', 'email'])
-  };
 
   UserSchema.methods.generateAuthToken = function () {
     const access = 'authenticated'
@@ -140,6 +124,29 @@ UserSchema.statics.findByToken = function (token) {
     'tokens.token': token,
     'tokens.access': 'auth'
   });
+};
+
+UserSchema.statics.verifyLogin = function(email, password) {
+  return new Promise((resolve, reject) => {
+
+    if (isEmpty(email)) reject('')
+    User.findOne({ email })
+      .then(user => {
+        if (!user) {
+          reject({ email: 'email not found' })
+        } else if (isEmpty(password)) {
+          reject('');
+        } else {
+          bcrypt.compare(password, user.password)
+            .then(isMatch => {
+              isMatch ? resolve(user) :
+              reject({ password: 'password incorrect' })
+            })
+            .catch(e => console.log(e))
+          }
+      })
+      .catch(e => console.log(e))
+  })
 };
 
 const User = mongoose.model('User', UserSchema);
@@ -253,3 +260,10 @@ module.exports = {User};
 // MIDDLEWARE (THE AUTHENTICATE IS SET AS AN ARGUEMENT TO THE EXPRESS ROUTE)
 // AND THE MIDDLEWARE DETERMINES WHETHER OR NOT THE PARTICULAR REQUEST USER
 // CAN ACCESS THE REQUESTED ROUTE
+
+
+// // UserSchema.methods.toJSON = function () {
+//   var user = this;
+//   var userObject = user.toObject();
+//   return _.pick(userObject, ['_id', 'email'])
+// };

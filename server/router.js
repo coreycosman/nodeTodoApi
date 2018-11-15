@@ -7,14 +7,13 @@ const dashboardController = require('./controllers/dashboard-controller');
 
 // MIDDLEWARE:
 const requireAuth = passport.authenticate('jwt', { session: false });
-const requireSignIn = passport.authenticate('local', { session: false });
 
 // ROUTER:
 module.exports = (app) => {
   // Users Controller Routes:
   app.post('/users', usersController.signup)
 
-  app.post('/users/login', requireSignIn, usersController.login)
+  app.post('/users/login', usersController.login)
   // Dashboard Controller Routes
   app.get('/dashboard', requireAuth, dashboardController.dashboard)
 }
