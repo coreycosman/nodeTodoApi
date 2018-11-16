@@ -22,8 +22,8 @@ if (localStorage.jwtToken) {
   decoded.token = localStorage.jwtToken
   store.dispatch(setCurrentUser(decoded))
 
-  const currentTime = Date.now()
-  if (decoded.iat < currentTime - 3600) {
+  const currentTime = Math.floor(Date.now() / 1000)
+  if (decoded.exp < currentTime) {
     store.dispatch(logout())
     window.location.href = '/'
   }

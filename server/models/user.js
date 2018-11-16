@@ -42,15 +42,33 @@ var UserSchema =  new mongoose.Schema({
   }
 });
 
+// Before Actions:
+
+  UserSchema.pre('save', function (next) {
+    user = this;
+    if (user.isModified('password')) {
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(user.password, salt, (err, hash) => {
+          if (err) { return next(err); }
+
+          user.password = hash
+          next();
+        });
+      });
+    } else {
+      next();
+    }
+  });
+
 // INSTANCE METHODS:
 
 
   UserSchema.methods.generateAuthToken = function () {
     const access = 'authenticated'
-    const timestamp =  new Date().getTime();
+    const timestamp =  Math.floor(Date.now() / 1000)
     const token = jwt.sign({
       sub: this.id,
-      expiresIn: 3600,
+      exp: Math.floor(Date.now() / 1000) + 3600,
       iat: timestamp
     }, process.env.JWT_SECRET).toString();
 
@@ -70,61 +88,7 @@ var UserSchema =  new mongoose.Schema({
     this.update()
   }
 
-
-  UserSchema.methods.comparePassword = function(password, callback) {
-    // const body = _.pick(req.body, ['email', 'password'])
-    bcrypt.compare(password, this.password, (err, isMatch) => {
-      if (err) { return callback(err); }
-
-      callback(null, isMatch);
-    });
-  }
-
-// TRY TO REFACTOR AS PROMISE
-  // UserSchema.method.comparePassword = function(password) {
-  //   return new Promise(resolve, reject) => {
-  //     bcrypt.compare(password, this.password, (err, isMatch) => {
-  //       if (err) { return reject() }
-  //
-  //       resolve(null, isMatch);
-  //     })
-  //   }
-  // }
-
-// Before Actions:
-
-  UserSchema.pre('save', function (next) {
-    user = this;
-    if (user.isModified('password')) {
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(user.password, salt, (err, hash) => {
-          if (err) { return next(err); }
-
-          user.password = hash
-          next();
-        });
-      });
-    } else {
-      next();
-    }
-  });
-
 // Class Methods:
-
-UserSchema.statics.findByToken = function (token) {
-  // var User = this;
-  // var decoded;
-  try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (e) {
-    return Promise.reject();
-  }
-  return User.findOne({
-    '_id': decoded._id,
-    'tokens.token': token,
-    'tokens.access': 'auth'
-  });
-};
 
 UserSchema.statics.verifyLogin = function(email, password) {
   return new Promise((resolve, reject) => {
@@ -267,3 +231,13 @@ module.exports = {User};
 //   var userObject = user.toObject();
 //   return _.pick(userObject, ['_id', 'email'])
 // };
+
+
+// UserSchema.methods.comparePassword = function(password, callback) {
+//   // const body = _.pick(req.body, ['email', 'password'])
+//   bcrypt.compare(password, this.password, (err, isMatch) => {
+//     if (err) { return callback(err); }
+//
+//     callback(null, isMatch);
+//   });
+// }

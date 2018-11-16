@@ -2,8 +2,6 @@ const passport =  require('passport');
 const { User } = require('../models/user');
 const { Strategy, ExtractJwt } = require('passport-jwt');
 
-const _ = require('lodash');
-
 // Auth Strategy
 
 const jwtOptions = {
